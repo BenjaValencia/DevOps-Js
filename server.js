@@ -16,12 +16,29 @@ let db;
 
 async function initDB() {
     try {
+        console.log('Verificando/Creando base de datos inicial...');
+        
+        // 1. Conexión temporal al motor (sin especificar base de datos)
+        const connectionSetup = await mysql.createConnection({
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT || 3306,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD
+        });
+        
+        // 2. Ejecutar la creación de la base de datos de manera segura
+        const dbName = process.env.DB_NAME || 'users_db';
+        await connectionSetup.execute(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
+        await connectionSetup.end(); // Cerramos conexión temporal
+        console.log(`Base de datos '${dbName}' verificada/creada con éxito.`);
+
+        // 3. Conexión normal de la aplicación a la base de datos ya existente
         db = await mysql.createConnection({
             host: process.env.DB_HOST,
             port: process.env.DB_PORT,
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME
+            database: dbName
         });
         console.log('Connected to MySQL database');
         
@@ -48,7 +65,7 @@ async function initDB() {
             console.log('Initial user registered: admin / admin123');
         }
     } catch (error) {
-        console.error('Database connection error:', error);
+        console.error('Database connection or initialization error:', error);
         process.exit(1);
     }
 }

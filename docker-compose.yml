@@ -13,6 +13,11 @@ services:
       MYSQL_DATABASE: ${DB_NAME}
     volumes:
       - user_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # Microservicio de Usuarios en Node.js
   user-service:
@@ -31,7 +36,8 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
-      - user-mysql
+      user-mysql:
+        condition: service_healthy
 
 volumes:
   user_db_data:

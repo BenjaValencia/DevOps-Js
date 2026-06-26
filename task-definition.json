@@ -1,0 +1,116 @@
+{
+  "taskDefinitionArn": "arn:aws:ecs:us-east-1:138549929775:task-definition/ms-user-task:1",
+  "containerDefinitions": [
+    {
+      "name": "eval3_user_backend",
+      "image": "138549929775.dkr.ecr.us-east-1.amazonaws.com/ms-user",
+      "cpu": 0,
+      "portMappings": [
+        {
+          "containerPort": 8081,
+          "hostPort": 8081,
+          "protocol": "tcp",
+          "name": "eval3_user_backend-8081-tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "DB_NAME",
+          "value": "users_db"
+        },
+        {
+          "name": "PORT",
+          "value": "8081"
+        },
+        {
+          "name": "DB_HOST",
+          "value": "rds-bd.cp5j8m4r0aoe.us-east-1.rds.amazonaws.com"
+        },
+        {
+          "name": "DB_PORT",
+          "value": "3306"
+        },
+        {
+          "name": "DB_USER",
+          "value": "root"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "value": "Benja*2803*"
+        }
+      ],
+      "environmentFiles": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "ulimits": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/ms-user-task",
+          "awslogs-create-group": "true",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        },
+        "secretOptions": []
+      },
+      "systemControls": []
+    }
+  ],
+  "family": "ms-user-task",
+  "taskRoleArn": "arn:aws:iam::138549929775:role/LabRole",
+  "executionRoleArn": "arn:aws:iam::138549929775:role/LabRole",
+  "networkMode": "awsvpc",
+  "revision": 1,
+  "volumes": [],
+  "status": "ACTIVE",
+  "requiresAttributes": [
+    {
+      "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+    },
+    {
+      "name": "ecs.capability.execution-role-awslogs"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.ecr-auth"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.task-iam-role"
+    },
+    {
+      "name": "ecs.capability.execution-role-ecr-pull"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+    },
+    {
+      "name": "ecs.capability.task-eni"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+    }
+  ],
+  "placementConstraints": [],
+  "compatibilities": [
+    "EC2",
+    "FARGATE",
+    "MANAGED_INSTANCES"
+  ],
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "1024",
+  "memory": "3072",
+  "registeredAt": "2026-06-26T09:10:32.955Z",
+  "registeredBy": "arn:aws:sts::138549929775:assumed-role/voclabs/user3262188=benj.valencia@duocuc.cl",
+  "enableFaultInjection": false,
+  "tags": []
+}
