@@ -53,7 +53,7 @@ jobs:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
-          # 🌟 Forzamos los datos reales directo en el pipeline
+          # 🌟 ASEGURAMOS LAS VARIABLES DIRECTAMENTE CON LOS SECRETOS DE GITHUB 🌟
           environment-variables: |
             PORT=8081
             DB_HOST=rds-bd.cp5j8m4r0aoe.us-east-1.rds.amazonaws.com
