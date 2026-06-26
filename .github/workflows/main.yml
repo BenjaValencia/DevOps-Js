@@ -59,7 +59,7 @@ jobs:
             DB_HOST=rds-bd.cp5j8m4r0aoe.us-east-1.rds.amazonaws.com
             DB_PORT=3306
             DB_USER=root
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_PASSWORD=Benja*2803*
             DB_NAME=users_db
 
       - name: Deploy Amazon ECS task definition
