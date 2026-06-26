@@ -53,10 +53,10 @@ jobs:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
-          # Inyectamos de forma segura las variables para Node.js
+          # 🌟 Forzamos los datos reales directo en el pipeline
           environment-variables: |
             PORT=8081
-            DB_HOST=${{ secrets.DB_HOST }}
+            DB_HOST=rds-bd.cp5j8m4r0aoe.us-east-1.rds.amazonaws.com
             DB_PORT=3306
             DB_USER=root
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
