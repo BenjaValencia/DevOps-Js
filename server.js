@@ -7,8 +7,14 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 8081;
 
-// Middleware
-app.use(cors());
+// ==========================================
+// Middleware - Configuración de Seguridad
+// ==========================================
+app.use(cors({
+    origin: '*', // Permite peticiones desde cualquier origen (incluyendo tu frontend en Amazon S3)
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(bodyParser.json());
 
 // Declaramos 'db' que ahora almacenará el Pool de conexiones
@@ -29,7 +35,7 @@ async function initDB() {
         const dbName = process.env.DB_NAME || 'users_db';
         await connectionSetup.execute(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
         await connectionSetup.end(); 
-        console.log(`Base de datos '${dbName}' verificada con éxito.`);
+        console.log(`Base de datos '${dbName}' verified con éxito.`);
 
         // 2. CREACIÓN DEL POOL (Reemplaza la conexión única e inestable)
         db = mysql.createPool({
