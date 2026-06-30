@@ -11,38 +11,42 @@ const port = process.env.PORT || 8081;
 app.use(cors());
 app.use(bodyParser.json());
 
-// Database connection
+// Declaramos 'db' que ahora almacenará el Pool de conexiones
 let db;
 
 async function initDB() {
     try {
         console.log('Verificando/Creando base de datos inicial...');
         
-        // 1. Conexión temporal al motor (sin especificar base de datos)
+        // 1. Conexión temporal al motor para asegurar que exista la BD
         const connectionSetup = await mysql.createConnection({
             host: process.env.DB_HOST,
-            port: process.env.DB_PORT || 3306,
+            port: parseInt(process.env.DB_PORT) || 3306,
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD
         });
         
-        // 2. Ejecutar la creación de la base de datos de manera segura
         const dbName = process.env.DB_NAME || 'users_db';
         await connectionSetup.execute(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
-        await connectionSetup.end(); // Cerramos conexión temporal
-        console.log(`Base de datos '${dbName}' verificada/creada con éxito.`);
+        await connectionSetup.end(); 
+        console.log(`Base de datos '${dbName}' verificada con éxito.`);
 
-        // 3. Conexión normal de la aplicación a la base de datos ya existente
-        db = await mysql.createConnection({
+        // 2. CREACIÓN DEL POOL (Reemplaza la conexión única e inestable)
+        db = mysql.createPool({
             host: process.env.DB_HOST,
-            port: process.env.DB_PORT,
+            port: parseInt(process.env.DB_PORT) || 3306,
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
-            database: dbName
+            database: dbName,
+            waitForConnections: true,
+            connectionLimit: 10, // AWS Fargate manejará hasta 10 conexiones simultáneas por tarea
+            queueLimit: 0,
+            enableKeepAlive: true, // Crucial para AWS: evita que RDS corte el canal por inactividad
+            keepAliveInitialDelay: 10000
         });
-        console.log('Connected to MySQL database');
+        console.log('Pool de conexiones MySQL inicializado correctamente');
         
-        // Create users table if not exists
+        // Crear tabla si no existe (el Pool expone la función .execute igual que la conexión)
         await db.execute(`
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -83,7 +87,7 @@ app.post('/api/users/register', async (req, res) => {
             return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
         }
         
-        // Check if username exists
+        // El pool nos entrega una conexión sana de manera transparente aquí
         const [existingUser] = await db.execute(
             'SELECT id FROM users WHERE username = ? OR email = ?',
             [username, email]
